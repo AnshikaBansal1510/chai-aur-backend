@@ -7,6 +7,8 @@ cloudinary.config({
   api_secret: 'process.env.CLOUDINARY_API_SECRET'
 });
 
+// server to cloudinary - goal
+
 // give local file path in the parameter
 // upload it 
 // if successfully uploaded - unlink file 

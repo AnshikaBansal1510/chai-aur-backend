@@ -51,11 +51,11 @@ const userSchema = new Schema(
   }
 )
 
-userSchema.pre("save", async function(next) {
-  if(!this.isModified("password"))    return next();
+userSchema.pre("save", async function(next) {           // do not use arrow fn -> do not have reference of this
+  if(!this.isModified("password"))    return next();    // ensures only encrypt when password field is changed
 
   this.password = bcrypt.hash(this.password, 10)
-  next()
+  next()        // flag aage pass krdo
 })
 
 userSchema.methods.isPasswordCorrect = async function(password) {
@@ -63,10 +63,10 @@ userSchema.methods.isPasswordCorrect = async function(password) {
   return await bcrypt.compare(password, this.password)
 }
 
-userSchema.methods.generateAccessToken = function() {     // already saved in database..have access in this
+userSchema.methods.generateAccessToken = function() {     // already saved in database..have access in 'this'
 
   return jwt.sign(
-    {
+    {                                 // payload
       _id: this._id,
       email: this.email,
       username: this.username,
@@ -79,7 +79,7 @@ userSchema.methods.generateAccessToken = function() {     // already saved in da
   )
 }
 
-userSchema.methods.generateRefreshToken = function() {
+userSchema.methods.generateRefreshToken = function() {        // contains less info
   return jwt.sign(
     {
       _id: this._id,

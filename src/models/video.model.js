@@ -20,7 +20,7 @@ const videoSchema = new Schema(
       required: true
     },
     duration: {
-      type: Number,  // cloudinary
+      type: Number,  // cloudinary send info of file after saving it 
       required: true
     },
     views: {
@@ -41,6 +41,6 @@ const videoSchema = new Schema(
   }
 )
 
-videoSchema.plugin(mongooseAggregatePaginate)
+videoSchema.plugin(mongooseAggregatePaginate)               // can write aggregation queries now
 
 export const Video = mongoose.model("Video", videoSchema);

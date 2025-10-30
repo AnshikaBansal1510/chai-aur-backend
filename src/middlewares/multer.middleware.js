@@ -1,7 +1,7 @@
 import multer from "multer";
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (req, file, cb) {     // req : body (json data) config by express ... to config file multer is used
     cb(null, "./public/temp")   // (error, destination)
   },
   filename: function (req, file, cb) {
