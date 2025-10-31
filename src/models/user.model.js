@@ -54,7 +54,7 @@ const userSchema = new Schema(
 userSchema.pre("save", async function(next) {           // do not use arrow fn -> do not have reference of this
   if(!this.isModified("password"))    return next();    // ensures only encrypt when password field is changed
 
-  this.password = bcrypt.hash(this.password, 10)
+  this.password = await bcrypt.hash(this.password, 10)
   next()        // flag aage pass krdo
 })
 
@@ -91,4 +91,4 @@ userSchema.methods.generateRefreshToken = function() {        // contains less i
   )
 }
 
-export const User = mongoose.model("User", userSchema)
+export const User = mongoose.model("User", userSchema)    // User can directly contact with db
