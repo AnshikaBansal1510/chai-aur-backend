@@ -6,8 +6,8 @@ const router = Router()
 
 router.route("/register").post(
   upload.fields([                   // middleware upload used just before registerUser method is executed
-    {
-      name: "avatar",
+    {                               // array not used bcoz woh ek hi field mein multiple files leta hai
+      name: "avatar",               // single used to upload single file
       maxCount: 1
     },
     {

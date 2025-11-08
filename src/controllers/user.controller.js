@@ -12,8 +12,8 @@ const registerUser = asyncHandler( async (req, res) => {
   // get user details from frontend
   // validation - not empty
   // check if user already exists: username, email
-  // check for images, check for avatar
-  // if available - upload them to cloudinary, avatar
+  // check for images, check for avatar (multer upload check)
+  // if available - upload them to cloudinary, avatar (cloudinary upload check)
   // create user object - create entry in db
   // remove password and refresh token field from response (to frontend)
   // check for user creation
@@ -21,7 +21,9 @@ const registerUser = asyncHandler( async (req, res) => {
   // else -> error
 
   // data handling - json
+  // form and json data from req.body
   const { fullname, email, username, password } = req.body
+
   // console.log("email: ", email);
 
   // if(fullname === ""){
@@ -42,6 +44,7 @@ const registerUser = asyncHandler( async (req, res) => {
     throw new ApiError(409, "User with email or username already exists")
   }
 
+  // middleware add more fields to req.
   const avatarLocalPath = req.files?.avatar[0]?.path;
   // const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
