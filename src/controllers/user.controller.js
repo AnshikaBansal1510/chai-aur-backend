@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const generateAccessAndRefreshTokens = async (userId) => 
 {
@@ -456,6 +457,61 @@ const getUserChannelProfile = asyncHandler( async (req, res) => {
   )
 })
 
+const getWatchHistory = asyncHandler( async (req, res) => {
+
+  const user = await User.aggregate([         // aggregation pipeline ka code directly jaata hai ... mongoose do not convert String id to mongodb object id
+    {
+      $match: {                                               // user milgya jiski watch history chahiye
+        _id: new mongoose.Types.ObjectId(req.user._id)
+      }
+    },
+    {
+      $lookup: {                      // watch history cantains lot of documents of videos 
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistory",
+        pipeline: [                   // sub pipeline to get owner field
+          {
+            $lookup: {                // user ke andar saari fields aagyi but only some are required
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
+              pipeline: [
+                {
+                  $project: {       // project required fields of owner
+                    fullname: 1,
+                    username: 1,
+                    avatar: 1
+                  }
+                }
+              ]
+            }
+          },
+          {                           // if this not done : owner will be an array jiske 0th index pe details hongi
+            $addFields: {
+              owner: {
+                $first: "$owner"      // seedha object mil jayega owner jisko . krke saari values access ho skti hai
+              }
+            }
+          }
+        ]
+      }
+    }
+  ])
+
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(
+      200, 
+      user[0].watchHistory,
+      "Watch history fetched successfully"
+    )
+  )
+})
+
 export { 
   registerUser, 
   loginUser,
@@ -466,5 +522,6 @@ export {
   updateAccountDetails,
   updateUserAvatar,
   updateUserCoverImage, 
-  getUserChannelProfile
+  getUserChannelProfile,
+  getWatchHistory
 }
